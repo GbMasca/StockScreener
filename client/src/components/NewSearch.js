@@ -424,7 +424,7 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
 
   useEffect(() => {
     loadEditState();
-  }, []);
+  });
 
   const renderInputs = () => {
     return (

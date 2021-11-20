@@ -10,7 +10,7 @@ class IndexDisplay extends Component {
     item: {
       index: "",
       value: "",
-      margin: "",
+      errorMargin: "",
     },
   };
 
@@ -37,7 +37,7 @@ class IndexDisplay extends Component {
         <Typography className={classes.indexName}>{item.index.toUpperCase()}</Typography>
         <Typography className={classes.indexValue}>{item.value}</Typography>
         <Typography className={classes.descriptionText}>Value</Typography>
-        <Typography className={classes.indexValue}>{item.margin}%</Typography>
+        <Typography className={classes.indexValue}>{item.errorMargin}%</Typography>
         <Typography className={classes.descriptionText}>
           Error Margin
         </Typography>
