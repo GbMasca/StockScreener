@@ -9,8 +9,8 @@ import {
   Toolbar,
   Typography,
 } from "@material-ui/core";
-import {colors} from "../utils/colors";
-import { Link } from "react-router-dom"
+import { colors } from "../utils/colors";
+import { Link } from "react-router-dom";
 
 class Header extends Component {
   renderStatus() {
@@ -21,16 +21,22 @@ class Header extends Component {
       case false:
         return (
           <div className={classes.appBarContent}>
-            <Button href={"/auth/google"} className={classes.appBarButton}>Login</Button>
+            <Button href={"/auth/google"} className={classes.appBarButton}>
+              Login
+            </Button>
           </div>
         );
       default:
         return (
           <div className={classes.appBarContent}>
-            <Link to={"/dash"} style={{ textDecoration: "none" }} >
-              <Button className={classes.appBarNavigationButton}>Dashboard</Button>
+            <Link to={"/dash"} style={{ textDecoration: "none" }}>
+              <Button className={classes.appBarNavigationButton}>
+                Dashboard
+              </Button>
             </Link>
-            <Button href={"/api/logout"} className={classes.appBarButton}>Logout</Button>
+            <Button href={"/api/logout"} className={classes.appBarButton}>
+              Logout
+            </Button>
           </div>
         );
     }
@@ -41,15 +47,18 @@ class Header extends Component {
       <div className={classes.root}>
         <AppBar position="static" className={classes.appBar}>
           <Toolbar>
-            <IconButton
-              edge="start"
-              className={classes.menuButton}
-              color="inherit"
-              aria-label="menu"
-              href={auth ? "/dash" : "/"}
-            >
-              <Typography className={classes.menuButtonText}>Easy Invest</Typography>
-            </IconButton>
+            <Link to={auth ? "/dash" : "/" }>
+              <IconButton
+                edge="start"
+                className={classes.menuButton}
+                color="inherit"
+                aria-label="menu"
+              >
+                <Typography className={classes.menuButtonText}>
+                  Easy Invest
+                </Typography>
+              </IconButton>
+            </Link>
             <div className={classes.spacing} />
             {this.renderStatus()}
           </Toolbar>
@@ -67,7 +76,7 @@ const styles = (theme) => ({
     marginRight: theme.spacing(2),
   },
   menuButtonText: {
-    fontSize: 23
+    fontSize: 23,
   },
   spacing: {
     flexGrow: 1,
@@ -80,20 +89,20 @@ const styles = (theme) => ({
     flexDirection: "row",
     alignItems: "center",
   },
-  appBarButton:{
+  appBarButton: {
     color: colors.white,
-    border: '2px solid',
+    border: "2px solid",
     borderColor: colors.secondary,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 15,
-    textTransform: 'none'
+    textTransform: "none",
   },
   appBarNavigationButton: {
     color: colors.white,
     fontSize: 18,
     marginRight: 10,
-    textTransform: 'none'
-  }
+    textTransform: "none",
+  },
 });
 
 // export default withStyles(styles, { withTheme: true })(Header);
