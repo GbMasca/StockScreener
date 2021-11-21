@@ -32,7 +32,7 @@ app.use(express.urlencoded());
 app.use(passport.initialize());
 app.use(passport.session());
 require("./routes/authRoutes")(app);
-//require("./routes/financeApiRoutes")(app);
+
 require("./routes/searchRoutes")(app);
 
 if (process.env.NODE_ENV === 'production') {
