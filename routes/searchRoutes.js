@@ -143,11 +143,6 @@ function cleanFinancials(financials) {
       keyStats: financial.defaultKeyStatistics,
       financialData: financial.financialData,
       summary: financial.price,
-      toSearch: {
-        ROA: financial.financialData.returnOnAssets,
-        ROE: financial.financialData.returnOnEquity,
-        beta: financial.defaultKeyStatistics.beta,
-      },
     };
     cleanFin.toSearch = buildToSearch(indexChoices.choices, cleanFin)
     cleanFin.toSearch.dividendsYield = calculateDividendYield(cleanFin)
