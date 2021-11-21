@@ -306,7 +306,7 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
     const newIndex = {
       index: indexText,
       value: valueText,
-      margin: marginText,
+      errorMargin: marginText,
     };
 
     indexList.push(newIndex);

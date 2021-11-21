@@ -47,7 +47,7 @@ class Header extends Component {
       <div className={classes.root}>
         <AppBar position="static" className={classes.appBar}>
           <Toolbar>
-            <Link to={auth ? "/dash" : "/" }>
+            <Link to={auth ? "/dash" : "/" } style={{ textDecoration: "none" }}>
               <IconButton
                 edge="start"
                 className={classes.menuButton}
