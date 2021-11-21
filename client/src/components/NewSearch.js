@@ -253,7 +253,7 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
       indexChoice.push(thisIndex.index)
       setIndexText(thisIndex.index);
       setValueText(thisIndex.value);
-      setMarginText(thisIndex.margin);
+      setMarginText(thisIndex.errorMargin);
     }
     setOpen(!open);
   };
@@ -350,8 +350,8 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
       const thisIndex = index.index;
       const value = index.value;
       let margin = null;
-      if (index.margin) {
-        margin = index.margin;
+      if (index.errorMargin) {
+        margin = index.errorMargin;
       }
       let stringIndex = thisIndex + " " + value;
       if (margin) {
