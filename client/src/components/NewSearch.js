@@ -201,7 +201,19 @@ const industryChoice = {
 };
 
 function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
-  const [indexChoice, setIndexChoice] = useState(["ROE", "ROA", "beta"]);
+  const [indexChoice, setIndexChoice] = useState([
+    "returnOnAssets",
+    "returnOnEquity",
+    "totalCash",
+    "ebitda",
+    "profitMargins",
+    "grossProfits",
+    "marketCap",
+    "debtToEquity",
+    "enterpriseToRevenue",
+    "enterpriseToEbitda",
+    "debtToEquity",
+  ]);
   const [indexList, setIndexList] = useState([]);
 
   const [nameText, setNameText] = useState("");

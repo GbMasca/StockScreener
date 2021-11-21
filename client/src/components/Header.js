@@ -74,6 +74,7 @@ const styles = (theme) => ({
   },
   menuButton: {
     marginRight: theme.spacing(2),
+    color: colors.white
   },
   menuButtonText: {
     fontSize: 23,
@@ -104,8 +105,6 @@ const styles = (theme) => ({
     textTransform: "none",
   },
 });
-
-// export default withStyles(styles, { withTheme: true })(Header);
 
 function mapStateToProps({ auth }) {
   return { auth };

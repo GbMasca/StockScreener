@@ -7,6 +7,8 @@ const yahooFinance = require("yahoo-finance2").default;
 const finviz = require("finviz-screener");
 const Screener = finviz();
 
+const indexChoices = require("../utils/indexChoices")
+
 module.exports = (app) => {
   app.post("/api/new_search", async (req, res) => {
     const { name, searchIndex, industry, sector } = req.body;
@@ -130,7 +132,7 @@ function getFinancials(tkrs) {
 
 function cleanFinancials(financials) {
   return financials.map((financial) => {
-    return {
+    const cleanFin =  {
       profile: financial.assetProfile,
       balanceSheets: {
         lastFiscal: financial.balanceSheetHistory.balanceSheetStatements[0],
@@ -147,6 +149,10 @@ function cleanFinancials(financials) {
         beta: financial.defaultKeyStatistics.beta,
       },
     };
+    cleanFin.toSearch = buildToSearch(indexChoices.choices, cleanFin)
+    cleanFin.toSearch.dividendsYield = calculateDividendYield(cleanFin)
+    cleanFin.toSearch.debtToEbitda = calculateDebtToEbitda(cleanFin)
+    return cleanFin
   });
 }
 
@@ -203,3 +209,58 @@ function findMatch(financial, indexes) {
 
   return isMatch;
 }
+
+const buildToSearch = (choices, fin) => {
+  const toS = {}
+  choices.map(i => {
+    const thisI = queryIndex(fin, i)
+    thisI.map(v => {
+      if(v) {
+        toS[i] = v
+      }
+    })
+  })
+
+  return toS
+};
+
+const queryIndex = (obj, prop) => {
+  const s = Object.keys(obj).map(k => {
+    if(obj[k][prop]) {
+      return obj[k][prop]
+    }
+    return false
+  })
+
+  return s
+};
+
+const calculateDividendYield = (fin) => {
+  let payed;
+  let sharesOutstanding;
+  let yield;
+  let price;
+  try {
+    payed = Math.abs(fin.cashflowStatements[0].dividendsPaid)
+    sharesOutstanding = fin.keyStats.sharesOutstanding
+    price = fin.financialData.currentPrice
+    const payedPerShare = payed/sharesOutstanding
+    yield = payedPerShare/price
+    return yield * 100
+  } catch (error) {
+    return
+  }
+};
+
+const calculateDebtToEbitda = (fin) => {
+  let ebitda;
+  let debt;
+  try {
+    debt = fin.financialData.totalDebt
+    ebitda = fin.financialData.ebitda
+    return debt/ebitda
+
+  } catch (error) {
+    return
+  }
+};
