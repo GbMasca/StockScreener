@@ -97,7 +97,10 @@ class Dashboard extends Component {
   }
 
   loadSearch() {
-    this.props.fetchSearch(this.props.auth.currentSearch);
+    const { auth } = this.props
+    if (auth.currentSearch) {
+      this.props.fetchSearch(this.props.auth.currentSearch);
+    }
   }
   loadUserSearches() {
     const { searches, currentSearch } = this.props;
