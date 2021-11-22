@@ -26,15 +26,22 @@ class OtherMatches extends Component {
 
   renderMatches() {
       const {matches} = this.state
+    let key;
     return (
       <div style={{height: 500, overflow: "auto"}}>
         <List>
-            {matches.map(match => {
+            {
+              matches.map(match => {
+              if(match.summary && match.profile) {
                 return (
                     <ListItem key={match.summary.symbol}>
                       <Match match={match} />
                     </ListItem>
                 )
+              } else {
+                ++key
+                return <div key={key}/>
+              }
             })}
         </List>
       </div>

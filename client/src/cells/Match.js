@@ -31,12 +31,15 @@ class Match extends Component {
 
     loadState() {
         const {summary, profile} = this.props.match
-        const match = {
-            name: summary.longName || "",
-            industry: profile.industry || "",
-            marketTraded: summary.exchangeName || "",
+        if( profile && summary) {
+            const match = {
+                name: summary.longName || "",
+                industry: profile.industry || "",
+                marketTraded: summary.exchangeName || "",
+            }
+            this.setState({match})
         }
-        this.setState({match})
+
     }
     renderInfo() {
         const {match} = this.state

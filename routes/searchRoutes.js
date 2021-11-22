@@ -220,14 +220,15 @@ const buildToSearch = (choices, fin) => {
 };
 
 const queryIndex = (obj, prop) => {
-  const s = Object.keys(obj).map(k => {
-    if(obj[k][prop]) {
-      return obj[k][prop]
+  const index = Object.keys(obj).map(i => {
+    try {
+      return obj[i][prop]
+    } catch (error) {
+      return false
     }
-    return false
   })
 
-  return s
+  return index
 };
 
 const calculateDividendYield = (fin) => {
