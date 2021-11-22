@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { withStyles } from "@material-ui/core/styles";
-import { compose } from "redux";
-import { connect } from "react-redux";
+import React, {useEffect, useState} from "react";
+import {withStyles} from "@material-ui/core/styles";
+import {compose} from "redux";
+import {connect} from "react-redux";
 import * as actions from "../actions";
-import { colors } from "../utils/colors";
-import { Button, Grid, MenuItem, TextField } from "@material-ui/core";
+import {colors} from "../utils/colors";
+import {Button, Grid, MenuItem, TextField} from "@material-ui/core";
 import IndexDisplay from "../cells/IndexDisplay";
-import { Add } from "@material-ui/icons";
-import { Link, useNavigate } from "react-router-dom";
+import {Add} from "@material-ui/icons";
+import {Link, useNavigate} from "react-router-dom";
 
 const _ = require("lodash");
 
@@ -199,37 +199,9 @@ const industryChoice = {
   ],
   "": [],
 };
-const ic = [
-  "returnOnAssets",
-  "returnOnEquity",
-  "totalCash",
-  "ebitda",
-  "profitMargins",
-  "grossProfits",
-  "marketCap",
-  "debtToEquity",
-  "enterpriseToRevenue",
-  "enterpriseToEbitda",
-  "dividendsYield",
-  "debtToEbitda",
-]
 
 function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
   const [indexChoice, setIndexChoice] = useState([
-    "returnOnAssets",
-    "returnOnEquity",
-    "totalCash",
-    "ebitda",
-    "profitMargins",
-    "grossProfits",
-    "marketCap",
-    "debtToEquity",
-    "enterpriseToRevenue",
-    "enterpriseToEbitda",
-    "dividendsYield",
-    "debtToEbitda",
-  ]);
-  const [indexChoiceEdit, setIndexChoiceEdit] = useState([
     "returnOnAssets",
     "returnOnEquity",
     "totalCash",
@@ -291,10 +263,7 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
     if (thisIndex) {
       setIndexEdit(true);
       setToEdit(thisIndex);
-      const choice = indexChoice
-      choice.push(thisIndex.index)
-      setIndexChoiceEdit(choice)
-      ic.push(thisIndex.index)
+      indexChoice.push(thisIndex.index)
       setIndexText(thisIndex.index);
       setValueText(thisIndex.value);
       setMarginText(thisIndex.errorMargin);
@@ -315,7 +284,6 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
 
     setOpen(!open);
     setIndexEdit(false);
-    setIndexChoiceEdit(indexChoice)
   };
 
   const loadEditState = () => {
@@ -345,27 +313,6 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
       }
     }
   };
-  // const loadEditState = () => {
-  //   if (edit) {
-  //     setNameText(currentSearch.name);
-  //     setSectorText(currentSearch.sector);
-  //     setIndustryText(currentSearch.industry);
-  //     setIndexList(currentSearch.searchIndex);
-  //     setIsEdit(edit);
-  //     setThisSearch(currentSearch);
-  //     _.remove(ic, (c) => {
-  //       let remove = false;
-  //       currentSearch.searchIndex.map(({ index }) => {
-  //         if (index === c) {
-  //           return (remove = true);
-  //         } else {
-  //           return (remove = false);
-  //         }
-  //       });
-  //       return remove;
-  //     });
-  //   }
-  // };
 
   const addNewIndex = () => {
     const newIndex = {
@@ -376,9 +323,6 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
 
     indexList.push(newIndex);
     _.remove(indexChoice, (s) => {
-      return s === indexText;
-    });
-    _.remove(ic, (s) => {
       return s === indexText;
     });
 
@@ -467,26 +411,9 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
     }
   };
 
-  // const editIndex = () => {
-  //   const edited = indexList.map((index) => {
-  //     if (index.index === toEdit.index) {
-  //       return { index: indexText, value: valueText, margin: marginText };
-  //     }
-  //     return index;
-  //   });
-  //   _.remove(indexChoice, (s) => {
-  //     return s === indexText;
-  //   });
-  //   setIndexList(edited);
-  //   setIndexChoice(indexChoice);
-  //   handlePopUpClose();
-  // };
   const editIndex = () => {
     let list = indexList
     _.remove(list ,index=> {
-      return index.index === toEdit.index
-    })
-    _.remove(ic ,index=> {
       return index.index === toEdit.index
     })
     addNewIndex()
