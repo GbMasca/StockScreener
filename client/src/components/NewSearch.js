@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from "react";
-import {withStyles} from "@material-ui/core/styles";
-import {compose} from "redux";
-import {connect} from "react-redux";
+import React, { useEffect, useState } from "react";
+import { withStyles } from "@material-ui/core/styles";
+import { compose } from "redux";
+import { connect } from "react-redux";
 import * as actions from "../actions";
-import {colors} from "../utils/colors";
-import {Button, Grid, MenuItem, TextField} from "@material-ui/core";
+import { colors } from "../utils/colors";
+import { Button, Grid, MenuItem, TextField } from "@material-ui/core";
 import IndexDisplay from "../cells/IndexDisplay";
-import {Add} from "@material-ui/icons";
-import {Link, useNavigate} from "react-router-dom";
+import { Add } from "@material-ui/icons";
+import { Link, useNavigate } from "react-router-dom";
 
 const _ = require("lodash");
 
@@ -199,6 +199,20 @@ const industryChoice = {
   ],
   "": [],
 };
+const ic = [
+  "returnOnAssets",
+  "returnOnEquity",
+  "totalCash",
+  "ebitda",
+  "profitMargins",
+  "grossProfits",
+  "marketCap",
+  "debtToEquity",
+  "enterpriseToRevenue",
+  "enterpriseToEbitda",
+  "dividendsYield",
+  "debtToEbitda",
+]
 
 function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
   const [indexChoice, setIndexChoice] = useState([
@@ -212,7 +226,22 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
     "debtToEquity",
     "enterpriseToRevenue",
     "enterpriseToEbitda",
+    "dividendsYield",
+    "debtToEbitda",
+  ]);
+  const [indexChoiceEdit, setIndexChoiceEdit] = useState([
+    "returnOnAssets",
+    "returnOnEquity",
+    "totalCash",
+    "ebitda",
+    "profitMargins",
+    "grossProfits",
+    "marketCap",
     "debtToEquity",
+    "enterpriseToRevenue",
+    "enterpriseToEbitda",
+    "dividendsYield",
+    "debtToEbitda",
   ]);
   const [indexList, setIndexList] = useState([]);
 
@@ -260,9 +289,12 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
 
   const handlePopUpOpen = (thisIndex) => {
     if (thisIndex) {
-      setIndexEdit(true)
-      setToEdit(thisIndex)
-      indexChoice.push(thisIndex.index)
+      setIndexEdit(true);
+      setToEdit(thisIndex);
+      const choice = indexChoice
+      choice.push(thisIndex.index)
+      setIndexChoiceEdit(choice)
+      ic.push(thisIndex.index)
       setIndexText(thisIndex.index);
       setValueText(thisIndex.value);
       setMarginText(thisIndex.errorMargin);
@@ -270,10 +302,9 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
     setOpen(!open);
   };
   const handlePopUpClose = (cancel) => {
-
     if (cancel) {
       _.remove(indexChoice, (s) => {
-        return s === indexText;
+        return s === toEdit.index;
       });
       setIndexChoice(indexChoice);
     }
@@ -283,7 +314,8 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
     setMarginText("10");
 
     setOpen(!open);
-    setIndexEdit(false)
+    setIndexEdit(false);
+    setIndexChoiceEdit(indexChoice)
   };
 
   const loadEditState = () => {
@@ -295,24 +327,45 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
       setIsEdit(edit);
       setThisSearch(currentSearch);
       if (currentSearch.searchIndex.length === indexChoice.length) {
-        setIndexChoice([])
+        setIndexChoice([]);
       } else {
-        const choice = indexChoice
-        _.remove(choice, c => {
-          let remove = false
-          currentSearch.searchIndex.map(({index}) => {
+        const choice = indexChoice;
+        _.remove(choice, (c) => {
+          let remove = false;
+          currentSearch.searchIndex.map(({ index }) => {
             if (index === c) {
-              return remove = true
+              return (remove = true);
             } else {
-              return remove = false
+              return (remove = false);
             }
-          })
-          return remove
-        })
-        setIndexChoice(choice)
+          });
+          return remove;
+        });
+        setIndexChoice(choice);
       }
     }
   };
+  // const loadEditState = () => {
+  //   if (edit) {
+  //     setNameText(currentSearch.name);
+  //     setSectorText(currentSearch.sector);
+  //     setIndustryText(currentSearch.industry);
+  //     setIndexList(currentSearch.searchIndex);
+  //     setIsEdit(edit);
+  //     setThisSearch(currentSearch);
+  //     _.remove(ic, (c) => {
+  //       let remove = false;
+  //       currentSearch.searchIndex.map(({ index }) => {
+  //         if (index === c) {
+  //           return (remove = true);
+  //         } else {
+  //           return (remove = false);
+  //         }
+  //       });
+  //       return remove;
+  //     });
+  //   }
+  // };
 
   const addNewIndex = () => {
     const newIndex = {
@@ -323,6 +376,9 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
 
     indexList.push(newIndex);
     _.remove(indexChoice, (s) => {
+      return s === indexText;
+    });
+    _.remove(ic, (s) => {
       return s === indexText;
     });
 
@@ -351,7 +407,7 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
       setMarginError(newMarginError);
     } else {
       if (indexEdit) {
-        editIndex()
+        editIndex();
       } else {
         addNewIndex();
       }
@@ -407,225 +463,251 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
       setSectorError(newSectorError);
       setIndustryError(newIndustryError);
     } else {
-      createNewSearch()
+      createNewSearch();
     }
   };
 
+  // const editIndex = () => {
+  //   const edited = indexList.map((index) => {
+  //     if (index.index === toEdit.index) {
+  //       return { index: indexText, value: valueText, margin: marginText };
+  //     }
+  //     return index;
+  //   });
+  //   _.remove(indexChoice, (s) => {
+  //     return s === indexText;
+  //   });
+  //   setIndexList(edited);
+  //   setIndexChoice(indexChoice);
+  //   handlePopUpClose();
+  // };
   const editIndex = () => {
-    const edited = indexList.map((index) => {
-      if (index.index === toEdit.index) {
-        return {index: indexText, value: valueText, margin:marginText}
-      }
-      return index
+    let list = indexList
+    _.remove(list ,index=> {
+      return index.index === toEdit.index
     })
-
-    _.remove(indexChoice, (s) => {
-      return s === indexText;
-    });
-    setIndexList(edited)
-    setIndexChoice(indexChoice);
-    handlePopUpClose();
-  };
+    _.remove(ic ,index=> {
+      return index.index === toEdit.index
+    })
+    addNewIndex()
+    setIndexList(list)
+    handlePopUpClose()
+  }
   const deleteIndex = () => {
-    _.remove(indexList, i => {
-      return i.index === toEdit.index
-    })
-    setIndexList(indexList)
+    _.remove(indexList, (i) => {
+      return i.index === toEdit.index;
+    });
+    setIndexList(indexList);
     handlePopUpClose();
   };
 
   useEffect(() => {
-    loadEditState();
-  });
+    loadEditState()
+  }, []);
 
   const renderInputs = () => {
     return (
-        <div className={classes.inputContainer}>
-          <TextField
-              label={"Name"}
-              id={"outlined-search"}
-              helperText={
-                nameError ? "You must provide a name!" : "Give your search a name"
-              }
-              required
-              value={nameText}
-              onChange={handleChangeNameText}
-              error={nameError}
-              className={classes.indexInput}
-              inputProps={{style: {fontSize: 40}}}
-          />
-          <TextField
-              id="outlined-search"
-              select
-              label="Sector"
-              value={sectorText}
-              onChange={handleChangeSectorText}
-              helperText={
-                sectorError
-                    ? "You must provide a sector!"
-                    : "Please select the sector"
-              }
-              required
-              error={sectorError}
-              className={classes.indexInput}
-          >
-            {sectorChoice.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-              id="outlined-select-currency"
-              select
-              label="Industry"
-              value={industryText}
-              onChange={handleChangeIndustryText}
-              helperText={
-                industryError
-                    ? "You must provide a industry!"
-                    : "Please select the industry"
-              }
-              required
-              error={industryError}
-              className={classes.indexInput}
-          >
-            {industryChoice[sectorText].map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-            ))}
-          </TextField>
-        </div>
+      <div className={classes.inputContainer}>
+        <TextField
+          label={"Name"}
+          id={"outlined-search"}
+          helperText={
+            nameError ? "You must provide a name!" : "Give your search a name"
+          }
+          required
+          value={nameText}
+          onChange={handleChangeNameText}
+          error={nameError}
+          className={classes.indexInput}
+          inputProps={{ style: { fontSize: 40 } }}
+        />
+        <TextField
+          id="outlined-search"
+          select
+          label="Sector"
+          value={sectorText}
+          onChange={handleChangeSectorText}
+          helperText={
+            sectorError
+              ? "You must provide a sector!"
+              : "Please select the sector"
+          }
+          required
+          error={sectorError}
+          className={classes.indexInput}
+        >
+          {sectorChoice.map((option) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          id="outlined-select-currency"
+          select
+          label="Industry"
+          value={industryText}
+          onChange={handleChangeIndustryText}
+          helperText={
+            industryError
+              ? "You must provide a industry!"
+              : "Please select the industry"
+          }
+          required
+          error={industryError}
+          className={classes.indexInput}
+        >
+          {industryChoice[sectorText].map((option) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </TextField>
+      </div>
     );
   };
   const renderSearchIndexes = () => {
     return (
-        <div style={{ width: "80%" }}>
-          <Grid container justifyContent={"center"}>
-            {indexList.map((index) => {
-              return (
-                  <div key={index.index} onClick={() => {
-                    handlePopUpOpen(index)
-                  }}>
-                    <Grid item style={{ margin: 10 }}>
-                    <IndexDisplay item={index} />
-                  </Grid>
-                  </div>
-              );
-            })}
-          </Grid>
-        </div>
+      <div style={{ width: "80%" }}>
+        <Grid container justifyContent={"center"}>
+          {indexList.map((index) => {
+            return (
+              <div
+                key={index.index}
+                onClick={() => {
+                  handlePopUpOpen(index);
+                }}
+              >
+                <Grid item style={{ margin: 10 }}>
+                  <IndexDisplay item={index} />
+                </Grid>
+              </div>
+            );
+          })}
+        </Grid>
+      </div>
     );
   };
   const renderAddIndexButton = () => {
     return (
-        <Button
-            className={classes.addIndexButton}
-            endIcon={<Add style={{ fontSize: 25 }} />}
-            onClick={() => {
-              handlePopUpOpen(null);
-            }}
-        >
-          Add index
-        </Button>
+      <Button
+        className={classes.addIndexButton}
+        endIcon={<Add style={{ fontSize: 25 }} />}
+        onClick={() => {
+          handlePopUpOpen(null);
+        }}
+      >
+        Add index
+      </Button>
     );
   };
   const renderEndButtons = () => {
     return (
-        <div className={classes.endButtonContainer}>
-          <Button
-              className={classes.submitButton}
-              onClick={() => {
-                validateSearch();
-              }}
-          >
-            {edit ? "Update Screener" : "Create Screener"}
-          </Button>
-          <Link to={"/dash"} style={{ textDecoration: "none" }}>
-            <Button className={classes.cancelButton}>Cancel</Button>
-          </Link>
-        </div>
+      <div className={classes.endButtonContainer}>
+        <Button
+          className={classes.submitButton}
+          onClick={() => {
+            validateSearch();
+          }}
+        >
+          {edit ? "Update Screener" : "Create Screener"}
+        </Button>
+        <Link to={"/dash"} style={{ textDecoration: "none" }}>
+          <Button className={classes.cancelButton}>Cancel</Button>
+        </Link>
+      </div>
     );
   };
   const renderPopUp = () => {
     if (open) {
       return (
-          <div id="overlay" className={classes.popupRoot}>
-            <div className={classes.popupContainer}>
-              <TextField
-                  id="outlined-select-currency"
-                  select
-                  label="Index"
-                  value={indexText}
-                  onChange={handleChangeIndexText}
-                  helperText={
-                    indexError ? "You must provide a index" : "What index?"
-                  }
-                  variant="outlined"
-                  required
-                  error={indexError}
-                  className={classes.popupInput}
-              >
-                {indexChoice.map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option.toUpperCase()}
-                    </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                  label={"Value"}
-                  id={"outlined-search"}
-                  helperText={
-                    valueError ? "Invalid value!" : "Give your search a name"
-                  }
-                  required
-                  value={valueText}
-                  onChange={handleChangeValueText}
-                  variant="outlined"
-                  autoComplete={"none"}
-                  error={valueError}
-                  type={"number"}
-                  className={classes.popupInput}
-              />
-              <TextField
-                  label={"Error Margin"}
-                  id={"outlined-search"}
-                  helperText={
-                    marginError
-                        ? "Invalid Margin!"
-                        : "This is the margin of error relative to the value."
-                  }
-                  required
-                  value={marginText}
-                  onChange={handleChangeMarginText}
-                  variant="outlined"
-                  autoComplete={"none"}
-                  error={marginError}
-                  type={"number"}
-                  className={classes.popupInput}
-              />
-              <Button className={classes.popupAdd} onClick={validateNewIndex}>
-                {indexEdit ? "Edit" : "Add"}
-              </Button>
-              <Button className={classes.popupClose} onClick={() => handlePopUpClose(true)}>
-                cancel
-              </Button>
-              {indexEdit ? <Button onClick={deleteIndex}>Delete</Button> : <div/>}
-            </div>
+        <div id="overlay" className={classes.popupRoot}>
+          <div className={classes.popupContainer}>
+            <TextField
+              id="outlined-select-currency"
+              select
+              label="Index"
+              value={indexText}
+              onChange={handleChangeIndexText}
+              helperText={
+                indexError ? "You must provide a index" : "What index?"
+              }
+              variant="outlined"
+              required
+              error={indexError}
+              className={classes.popupInput}
+            >
+              {indexChoice.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option.toUpperCase()}
+                  </MenuItem>
+              ))}
+              {/*{ic.map((option) => (*/}
+              {/*  <MenuItem key={option} value={option}>*/}
+              {/*    {option}*/}
+              {/*  </MenuItem>*/}
+              {/*))}*/}
+            </TextField>
+            <TextField
+              label={"Value"}
+              id={"outlined-search"}
+              helperText={
+                valueError ? "Invalid value!" : "Give your search a name"
+              }
+              required
+              value={valueText}
+              onChange={handleChangeValueText}
+              variant="outlined"
+              autoComplete={"none"}
+              error={valueError}
+              type={"number"}
+              className={classes.popupInput}
+            />
+            <TextField
+              label={"Error Margin"}
+              id={"outlined-search"}
+              helperText={
+                marginError
+                  ? "Invalid Margin!"
+                  : "This is the margin of error relative to the value."
+              }
+              required
+              value={marginText}
+              onChange={handleChangeMarginText}
+              variant="outlined"
+              autoComplete={"none"}
+              error={marginError}
+              type={"number"}
+              className={classes.popupInput}
+            />
+            <Button className={classes.popupAdd} onClick={validateNewIndex}>
+              {indexEdit ? "Edit" : "Add"}
+            </Button>
+            <Button
+              className={classes.popupClose}
+              onClick={() => handlePopUpClose(true)}
+            >
+              cancel
+            </Button>
+            {indexEdit ? (
+              <Button onClick={deleteIndex}>Delete</Button>
+            ) : (
+              <div />
+            )}
           </div>
+        </div>
       );
     }
   };
   const render = () => {
     return (
-        <div className={classes.root}>
-          {renderInputs()}
-          {renderSearchIndexes()}
-          {renderAddIndexButton()}
-          {renderEndButtons()}
-          {renderPopUp()}
-        </div>
+      <div className={classes.root}>
+        {renderInputs()}
+        {renderSearchIndexes()}
+        {renderAddIndexButton()}
+        {renderEndButtons()}
+        {renderPopUp()}
+      </div>
     );
   };
 
@@ -740,6 +822,6 @@ function mapStateToProps({ auth, currentSearch }) {
   return { auth, currentSearch };
 }
 export default compose(
-    withStyles(styles, { withTheme: true }),
-    connect(mapStateToProps, actions)
+  withStyles(styles, { withTheme: true }),
+  connect(mapStateToProps, actions)
 )(NewSearch);
