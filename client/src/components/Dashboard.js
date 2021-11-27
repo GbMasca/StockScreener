@@ -38,11 +38,13 @@ function Dashboard({
       fetchUserSearches();
     }
     if (!currentSearch && auth) {
-      fetchSearch(auth.currentSearch);
-      fetchResults(auth.currentSearch);
-      setCurrentSearchID(auth.currentSearch);
+      if(auth.currentSearch) {
+        fetchSearch(auth.currentSearch);
+        fetchResults(auth.currentSearch);
+        setCurrentSearchID(auth.currentSearch);
+      }
     }
-    if (auth && auth.currentSearch !== currentSearchID) {
+    if (auth && auth.currentSearch && (auth.currentSearch !== currentSearchID)) {
       setCurrentSearchID(auth.currentSearch);
       fetchSearch(auth.currentSearch);
       fetchResults(auth.currentSearch);
@@ -148,9 +150,7 @@ function Dashboard({
         >
           {currentSearch ? currentSearch.name : "Loading"}
         </Button>
-        <Link to={"/dash/edit"} style={{ textDecoration: "none" }}>
-          <Button className={classes.editSearchButton}>Edit</Button>
-        </Link>
+        {renderEditButton()}
         <div style={{ flexGrow: 1 }} />
         <Link to={"/dash/new"} style={{ textDecoration: "none" }}>
           <Button endIcon={<Add />} className={classes.newSearchButton}>
@@ -159,6 +159,15 @@ function Dashboard({
         </Link>
       </div>
     );
+  };
+  const renderEditButton = () => {
+    if (auth && auth.currentSearch ) {
+      return (
+          <Link to={"/dash/edit"} style={{ textDecoration: "none" }}>
+            <Button className={classes.editSearchButton}>Edit</Button>
+          </Link>
+      )
+    }
   };
   const renderActionButtons = () => {
     return (
