@@ -1,128 +1,86 @@
-import React, { Component } from "react";
+import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { colors } from "../utils/colors";
 import { Grid, Typography } from "@material-ui/core";
+import {indexChoice, formatNumber} from "../utils/indexChoice";
 
-class BestMatch extends Component {
+function BestMatch({match, classes}) {
+  const { toSearch } = match
 
-  state = {
-    item: {
-      name: "",
-      industry: "",
-      marketTraded: "",
-      currentPrice: "",
-      marketCap: "",
-      beta: "",
-      peRatio: "",
-      volume: "",
-      dayRange: "",
-      earningsPerShare: "",
-    }
+  const indexes = indexChoice.choice
+  const indexesFront = indexChoice.toFront
+
+  const renderTitle = () => {
+    return <Typography className={classes.title}>Best Match</Typography>
   }
-
-  componentDidMount() {
-    // console.log("Mount COMP", this.props.item)
-    this.loadState(this.props.item)
-  }
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.item.name !== prevProps.item.name){
-      this.loadState(this.props.item)
-    }
-    // console.log("UPDATED")
-  }
-
-  loadState(item) {
-    this.setState({item})
-  };
-
-  formatMetric(value, indicator) {
-    let dividedBy = 1
-    if (indicator === "M") {
-      dividedBy = 1000000
-    } else if (indicator === "B") {
-      dividedBy = 1000000000
-    } else {
-      return Number(value).toFixed(2)
-    }
-
-    const formattedValue = String(Math.round(value/dividedBy))
-    return formattedValue+indicator
-
-  }
-
-  render() {
-    const { classes } = this.props;
-    const { item } = this.state
+  const renderHeader = () => {
     return (
-      <div>
-        <Typography className={classes.title}>Best Match</Typography>
-        <div className={classes.cardContainer}>
+        <div>
           <div className={classes.companyInfoHeader}>
             <div className={classes.companyInfoContainer}>
               <Typography className={classes.companyName}>
-                {item.name}
+                {toSearch.longName}
               </Typography>
               <Typography className={classes.companyIndustry}>
-                {item.industry}
+                {toSearch.industry}
               </Typography>
               <Typography className={classes.companyMarket}>
-                {item.marketTraded}
+                {toSearch.exchangeName}
               </Typography>
             </div>
             <div style={{ flexGrow: 1 }} />
             <div className={classes.companyPriceContainer}>
-              <Typography className={classes.companyPrice}>${item.currentPrice}</Typography>
+              <Typography className={classes.companyPrice}>${toSearch.currentPrice}</Typography>
               <Typography className={classes.descriptionText}>
                 Current Price
               </Typography>
             </div>
           </div>
-          <Grid container className={classes.gridContainer} spacing={6}>
-            <Grid item md={6}>
-              <div className={classes.metricContainer}>
-                <Typography className={classes.metricText}>${this.formatMetric(item.marketCap, "B")}</Typography>
-                <Typography className={classes.descriptionText}>Market Cap</Typography>
-              </div>
-            </Grid>
-            <Grid item md={6}>
-              <div className={classes.metricContainer}>
-                <Typography className={classes.metricText}>{this.formatMetric(item.beta, "V")}</Typography>
-                <Typography className={classes.descriptionText}>Beta</Typography>
-              </div>
-            </Grid>
-            <Grid item md={6}>
-              <div className={classes.metricContainer}>
-                <Typography className={classes.metricText}>{this.formatMetric(item.peRatio, "V")}</Typography>
-                <Typography className={classes.descriptionText}>PE Ratio</Typography>
-              </div>
-            </Grid>
-            <Grid item md={6}>
-              <div className={classes.metricContainer}>
-                <Typography className={classes.metricText}>{this.formatMetric(item.volume, "M")}</Typography>
-                <Typography className={classes.descriptionText}>Volume</Typography>
-              </div>
-            </Grid>
-            <Grid item md={6}>
-              <div className={classes.metricContainer} style={{marginTop: 4}}>
-                <Typography className={classes.metricText} style={{fontSize: 18}}>{item.dayRange}</Typography>
-                <Typography className={classes.descriptionText} style={{marginTop: 2}}>Day Range</Typography>
-              </div>
-            </Grid>
-            <Grid item md={6}>
-              <div className={classes.metricContainer}>
-                <Typography className={classes.metricText}>${this.formatMetric(item.earningsPerShare, "V")}</Typography>
-                <Typography className={classes.descriptionText}>EPS</Typography>
-              </div>
-            </Grid>
-          </Grid>
         </div>
-      </div>
-    );
+    )
   }
+  const renderMetrics = () => {
+    return (
+        <Grid container className={classes.gridContainer}>
+          {indexes.map(i => {
+            return (
+                <Grid item md={4} key={i}>
+                  <div className={classes.metricContainer}>
+                    <Typography className={classes.metricText}>{formatNumber(Number(toSearch[i]), i)}</Typography>
+                    <Typography className={classes.descriptionText}>{indexesFront[i]}</Typography>
+                  </div>
+                </Grid>
+            )
+          })}
+        </Grid>
+    )
+  }
+  const renderContainer = () => {
+    return (
+        <div className={classes.cardContainer}>
+          {renderHeader()}
+          {renderMetrics()}
+        </div>
+    )
+  }
+  const render = () => {
+    if (Object.keys(match).length === 0) {
+      return <Typography className={classes.title}>No Match</Typography>
+    } else {
+      return (
+          <div>
+            {renderTitle()}
+            {renderContainer()}
+          </div>
+      )
+    }
+
+  }
+
+  return render()
 }
 
-const styles = (theme) => ({
+const styles = () => ({
   root: {
     backgroundColor: colors.main,
   },
@@ -135,7 +93,6 @@ const styles = (theme) => ({
     width: "100%",
     backgroundColor: colors.main,
     borderRadius: 20,
-    height: 500,
   },
   companyInfoContainer: {
     paddingTop: 10,
@@ -159,14 +116,13 @@ const styles = (theme) => ({
     color: colors.white,
     fontSize: 35,
   },
-
   companyInfoHeader: {
     display: "flex",
     flexDirection: "row",
   },
   companyPriceContainer: {
-    paddingTop: 20,
-    paddingRight: 50,
+    paddingTop: 10,
+    paddingRight: 20,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -176,6 +132,8 @@ const styles = (theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    paddingBottom: 15,
+    minWidth: 200,
   },
   descriptionText: {
     color: colors.white,
@@ -188,9 +146,10 @@ const styles = (theme) => ({
   },
 
   gridContainer: {
-    marginTop: 40,
+    marginTop: 30,
+    paddingBottom: 30,
     marginLeft: '10%',
-    width: '80%'
+    width: '80%',
   },
 });
 

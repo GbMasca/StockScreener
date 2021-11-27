@@ -1,52 +1,32 @@
-import React, { Component } from "react";
+import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { compose } from "redux";
 import { Typography } from "@material-ui/core";
 import { connect } from "react-redux";
 import { colors } from "../utils/colors";
+import {indexChoice, formatNumber} from "../utils/indexChoice";
 
-class IndexDisplay extends Component {
-  state = {
-    item: {
-      index: "",
-      value: "",
-      errorMargin: "",
-    },
-  };
+function IndexDisplay({classes, item}) {
 
-  componentDidMount() {
-    this.loadState(this.props.item);
-  }
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    const { item } = this.props
-    if (item !== prevProps.item) {
-      this.loadState(item)
-    }
-  }
+  const indexesFront = indexChoice.toFront
 
-  loadState(item) {
-    this.setState({ item });
-  }
-
-  renderContent() {
-    const { item} = this.state;
-    const { classes } = this.props;
-
+  const renderContent = () => {
     return (
-      <div className={classes.root}>
-        <Typography className={classes.indexName}>{item.index.toUpperCase()}</Typography>
-        <Typography className={classes.indexValue}>{item.value}</Typography>
-        <Typography className={classes.descriptionText}>Value</Typography>
-        <Typography className={classes.indexValue}>{item.errorMargin}%</Typography>
-        <Typography className={classes.descriptionText}>
-          Error Margin
-        </Typography>
-      </div>
+        <div className={classes.root}>
+          <Typography className={classes.indexName}>{indexesFront[item.index]}</Typography>
+          <Typography className={classes.indexValue}>{formatNumber(item.value, item.index)}</Typography>
+          <Typography className={classes.descriptionText}>Value</Typography>
+          <Typography className={classes.indexValue}>{item.errorMargin}%</Typography>
+          <Typography className={classes.descriptionText}>
+            Error Margin
+          </Typography>
+        </div>
     );
   }
-  render() {
-    return this.renderContent();
+  const render = () => {
+    return renderContent();
   }
+  return render()
 }
 
 const styles = () => ({
@@ -55,7 +35,7 @@ const styles = () => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    width: 200,
+    width: 300,
     height: 150,
     border: "2px solid",
     borderColor: colors.main,
@@ -90,6 +70,6 @@ function mapStateToProps({ auth }) {
 }
 
 export default compose(
-  withStyles(styles, { withTheme: true }),
-  connect(mapStateToProps)
+    withStyles(styles, { withTheme: true }),
+    connect(mapStateToProps)
 )(IndexDisplay);

@@ -157,21 +157,22 @@ function findMatches(financials, indexes) {
     matches: [],
   };
 
-  let currentBest = 100000000;
+  let currentBest;
   let isFirst = true;
 
   financials.map((financial) => {
     const isMatch = findMatch(financial, indexes);
     if (isMatch) {
-      if (currentBest > isMatch) {
-        if (!isFirst) {
-          matches.matches.push(matches.bestMatch);
-          isFirst = false;
-        }
-        matches.bestMatch = financial;
-        currentBest = isMatch;
+      if (isFirst) {
+        currentBest = isMatch
+        matches.bestMatch = financial
+        isFirst = false
+      } else if(isMatch < currentBest) {
+        matches.matches.push(matches.bestMatch)
+        matches.bestMatch = financial
+        currentBest = isMatch
       } else {
-        matches.matches.push(financial);
+        matches.matches.push(financial)
       }
     }
   });
@@ -182,6 +183,7 @@ function findMatches(financials, indexes) {
 function findMatch(financial, indexes) {
   const toSearch = financial.toSearch;
   let isMatch = 0;
+  let matchList = []
 
   if (indexes.length < 1) {
     return 10000000;
@@ -198,11 +200,29 @@ function findMatch(financial, indexes) {
     if (thisValue < lowerBound || thisValue > upperBound) {
       return false;
     }
-
-    isMatch += Math.abs(thisValue - value);
+    matchList.push(getDifference(thisValue, value) - 1)
   }
 
+  isMatch = getAverage(matchList)
   return isMatch;
+}
+
+const getDifference = (x, y) => {
+  const absX = Math.abs(x)
+  const absY = Math.abs(y)
+  if (absX > absY) {
+    return  absX/absY
+  }
+  return absY/absX
+}
+
+const getAverage = (list) => {
+  let sum = 0
+  for (let i = 0; i < list.length; i++){
+    sum += list[i]
+  }
+
+  return sum/list.length
 }
 
 const buildToSearch = (choices, fin) => {
@@ -242,7 +262,7 @@ const calculateDividendYield = (fin) => {
     price = fin.financialData.currentPrice
     const payedPerShare = payed/sharesOutstanding
     yield = payedPerShare/price
-    return yield * 100
+    return yield
   } catch (error) {
     return
   }

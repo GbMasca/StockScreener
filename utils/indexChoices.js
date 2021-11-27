@@ -10,6 +10,10 @@ module.exports = {
         "debtToEquity",
         "enterpriseToRevenue",
         "enterpriseToEbitda",
+        "longName",
+        "industry",
+        "exchangeName",
+        "currentPrice",
     ]
 }
 

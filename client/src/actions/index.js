@@ -43,11 +43,11 @@ export const fetchUserSearches = () => async (dispatch) => {
 };
 
 export const fetchResults = (thisSearch) => async (dispatch) => {
-  const res = await axios.get("api/search/" + thisSearch);
+  const res = await axios.get("/api/search/" + thisSearch);
   dispatch({ type: FETCH_RESULTS, payload: res.data });
 };
 
 export const updateCurrentSearch = (search) => async (dispatch) => {
-  const res = await axios.post("api/update_current_search/", search);
+  const res = await axios.post("/api/update_current_search/", search);
   dispatch({ type: FETCH_USER, payload: res.data });
 };

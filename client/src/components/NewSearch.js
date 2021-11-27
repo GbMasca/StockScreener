@@ -8,6 +8,7 @@ import {Button, Grid, MenuItem, TextField} from "@material-ui/core";
 import IndexDisplay from "../cells/IndexDisplay";
 import {Add} from "@material-ui/icons";
 import {Link, useNavigate} from "react-router-dom";
+import {indexChoice} from "../utils/indexChoice";
 
 const _ = require("lodash");
 
@@ -201,20 +202,9 @@ const industryChoice = {
 };
 
 function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
-  const [indexChoice, setIndexChoice] = useState([
-    "returnOnAssets",
-    "returnOnEquity",
-    "totalCash",
-    "ebitda",
-    "profitMargins",
-    "grossProfits",
-    "marketCap",
-    "debtToEquity",
-    "enterpriseToRevenue",
-    "enterpriseToEbitda",
-    "dividendsYield",
-    "debtToEbitda",
-  ]);
+  const [loaded, setLoaded] = useState(false)
+
+  const [choice, setChoice] = useState(indexChoice.choice)
   const [indexList, setIndexList] = useState([]);
 
   const [nameText, setNameText] = useState("");
@@ -263,7 +253,7 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
     if (thisIndex) {
       setIndexEdit(true);
       setToEdit(thisIndex);
-      indexChoice.push(thisIndex.index)
+      choice.push(thisIndex.index)
       setIndexText(thisIndex.index);
       setValueText(thisIndex.value);
       setMarginText(thisIndex.errorMargin);
@@ -272,10 +262,12 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
   };
   const handlePopUpClose = (cancel) => {
     if (cancel) {
-      _.remove(indexChoice, (s) => {
-        return s === toEdit.index;
-      });
-      setIndexChoice(indexChoice);
+      if(toEdit) {
+        _.remove(choice, (s) => {
+          return s === toEdit.index;
+        });
+        setChoice(choice);
+      }
     }
 
     setIndexText("");
@@ -286,34 +278,6 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
     setIndexEdit(false);
   };
 
-  const loadEditState = () => {
-    if (edit) {
-      setNameText(currentSearch.name);
-      setSectorText(currentSearch.sector);
-      setIndustryText(currentSearch.industry);
-      setIndexList(currentSearch.searchIndex);
-      setIsEdit(edit);
-      setThisSearch(currentSearch);
-      if (currentSearch.searchIndex.length === indexChoice.length) {
-        setIndexChoice([]);
-      } else {
-        const choice = indexChoice;
-        _.remove(choice, (c) => {
-          let remove = false;
-          currentSearch.searchIndex.map(({ index }) => {
-            if (index === c) {
-              return (remove = true);
-            } else {
-              return (remove = false);
-            }
-          });
-          return remove;
-        });
-        setIndexChoice(choice);
-      }
-    }
-  };
-
   const addNewIndex = () => {
     const newIndex = {
       index: indexText,
@@ -322,12 +286,12 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
     };
 
     indexList.push(newIndex);
-    _.remove(indexChoice, (s) => {
+    _.remove(choice, (s) => {
       return s === indexText;
     });
 
     setIndexList(indexList);
-    setIndexChoice(indexChoice);
+    setChoice(indexChoice.choice);
     handlePopUpClose();
   };
   const validateNewIndex = () => {
@@ -429,8 +393,34 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
   };
 
   useEffect(() => {
-    loadEditState()
-  }, []);
+    const loadEditState = () => {
+      if (edit) {
+        setNameText(currentSearch.name);
+        setSectorText(currentSearch.sector);
+        setIndustryText(currentSearch.industry);
+        setIndexList(currentSearch.searchIndex);
+        setIsEdit(edit);
+        setThisSearch(currentSearch);
+        const choices = indexChoice.choice
+        _.remove(choices, (c) => {
+          let remove = false;
+          for (let i = 0; i < currentSearch.searchIndex.length; i++) {
+            const index = currentSearch.searchIndex[i].index
+            if (c === index) {
+              remove = true;
+              break;
+            }
+          }
+          return remove;
+        });
+        setChoice(choices);
+      }
+      setLoaded(true)
+    };
+    if(!loaded) {
+      loadEditState()
+    }
+  }, [choice, currentSearch, edit, loaded]);
 
   const renderInputs = () => {
     return (
@@ -564,16 +554,11 @@ function NewSearch({ classes, currentSearch, edit, postSearch, editSearch }) {
               error={indexError}
               className={classes.popupInput}
             >
-              {indexChoice.map((option) => (
+              {indexChoice.choice.map((option) => (
                   <MenuItem key={option} value={option}>
-                    {option.toUpperCase()}
+                    {indexChoice.toFront[option]}
                   </MenuItem>
               ))}
-              {/*{ic.map((option) => (*/}
-              {/*  <MenuItem key={option} value={option}>*/}
-              {/*    {option}*/}
-              {/*  </MenuItem>*/}
-              {/*))}*/}
             </TextField>
             <TextField
               label={"Value"}
