@@ -179,7 +179,9 @@ function Dashboard({
           alignItems: "center",
         }}
       >
-        <Button className={classes.compareButton}>Compare Results</Button>
+        <Link to={"/dash/comparables"} style={{ textDecoration: "none" }}>
+          <Button className={classes.compareButton}>Compare Results</Button>
+        </Link>
         <Button className={classes.dcfButton}>Run DCF Analysis</Button>
       </div>
     );
@@ -192,7 +194,6 @@ function Dashboard({
         {renderSearchIndex()}
         {renderBestMatch()}
         {renderOtherMatches()}
-        {renderActionButtons()}
         <div style={{ height: 200 }} />
       </div>
     );

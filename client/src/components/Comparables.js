@@ -4,12 +4,14 @@ import {withStyles} from "@material-ui/core/styles";
 import {connect} from "react-redux";
 import * as actions from "../actions";
 
-function Comparables() {
+
+function Comparables({auth, currentSearch, searchResults}) {
+
 
     const render = () => {
         return (
             <div>
-                Comparables
+                {searchResults.bestMatch.summary.symbol}
             </div>
         )
     }
@@ -22,8 +24,8 @@ const styles = () => ({
     }
 })
 
-function mapStateToProps({ auth, currentSearch, searchResults, searches }) {
-    return { auth, currentSearch, searchResults, searches };
+function mapStateToProps({ auth, currentSearch, searchResults}) {
+    return { auth, currentSearch, searchResults};
 }
 export default compose(
     withStyles(styles, { withTheme: true }),

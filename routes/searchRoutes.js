@@ -119,11 +119,10 @@ function getFinancials(tkrs) {
           "financialData",
           "price",
         ],
-      });
+      }, { validateResult: false });
     } catch (error) {
       result = error.result;
     }
-
     return result;
   });
 
@@ -132,22 +131,27 @@ function getFinancials(tkrs) {
 
 function cleanFinancials(financials) {
   return financials.map((financial) => {
-    const cleanFin =  {
-      profile: financial.assetProfile,
-      balanceSheets: {
-        lastFiscal: financial.balanceSheetHistory.balanceSheetStatements[0],
-        previousFiscal: financial.balanceSheetHistory.balanceSheetStatements[1],
-      },
-      incomeStatements: financial.incomeStatementHistory.incomeStatementHistory,
-      cashflowStatements: financial.cashflowStatementHistory.cashflowStatements,
-      keyStats: financial.defaultKeyStatistics,
-      financialData: financial.financialData,
-      summary: financial.price,
-    };
-    cleanFin.toSearch = buildToSearch(indexChoices.choices, cleanFin)
-    cleanFin.toSearch.dividendsYield = calculateDividendYield(cleanFin)
-    cleanFin.toSearch.debtToEbitda = calculateDebtToEbitda(cleanFin)
-    return cleanFin
+    try {
+      const cleanFin =  {
+        profile: financial.assetProfile,
+        balanceSheets: {
+          lastFiscal: financial.balanceSheetHistory.balanceSheetStatements[0],
+          previousFiscal: financial.balanceSheetHistory.balanceSheetStatements[1],
+        },
+        incomeStatements: financial.incomeStatementHistory.incomeStatementHistory,
+        cashflowStatements: financial.cashflowStatementHistory.cashflowStatements,
+        keyStats: financial.defaultKeyStatistics,
+        financialData: financial.financialData,
+        summary: financial.price,
+      };
+      cleanFin.toSearch = buildToSearch(indexChoices.choices, cleanFin)
+      cleanFin.toSearch.dividendsYield = calculateDividendYield(cleanFin)
+      cleanFin.toSearch.debtToEbitda = calculateDebtToEbitda(cleanFin)
+      return cleanFin
+    } catch (error) {
+      return {}
+    }
+
   });
 }
 
